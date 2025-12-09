@@ -1,24 +1,23 @@
 import requests
-from flask import current_app
+import os
 
 class WhatsAppService:
-
     @staticmethod
-    def send_message(text):
-        url = f"https://graph.facebook.com/v20.0/{current_app.config['PHONE_NUMBER_ID']}/messages"
-
+    def send_message(to, message):
+        url = f"https://graph.facebook.com/v20.0/{os.getenv('PHONE_NUMBER_ID')}/messages"
         headers = {
-            "Authorization": f"Bearer {current_app.config['WHATSAPP_TOKEN']}",
+            "Authorization": f"Bearer {os.getenv('WHATSAPP_TOKEN')}",
             "Content-Type": "application/json"
         }
-
         payload = {
             "messaging_product": "whatsapp",
-            "to": "<NOMOR_KAMU>",
+            "to": to,
             "type": "text",
-            "text": {"body": text}
+            "text": {"body": message}
         }
 
-        response = requests.post(url, json=payload, headers=headers)
-        print("Response WA:", response.text)
+        response = requests.post(url, headers=headers, json=payload)
+        print("SEND MESSAGE RESPONSE:", response.text)
+        return response.json()
+
         return response.text
