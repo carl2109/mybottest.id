@@ -3,9 +3,9 @@ from ..services.whatsapp_service import WhatsAppService
 
 message_bp = Blueprint("message_bp", __name__)
 
-# =========================
-#   GET VERIFICATION
-# =========================
+# ================
+# GET VERIFY
+# ================
 @message_bp.route("/webhook", methods=["GET"])
 def webhook_verify():
     mode = request.args.get("hub.mode")
@@ -16,13 +16,13 @@ def webhook_verify():
 
     if mode == "subscribe" and token == verify_token:
         return challenge, 200
-    else:
-        return "Verification token mismatch", 403
+
+    return "Verification token mismatch", 403
 
 
-# =========================
-#   POST – RECEIVE MESSAGE
-# =========================
+# ================
+# POST MESSAGE
+# ================
 @message_bp.route("/webhook", methods=["POST"])
 def webhook_post():
     data = request.get_json()
@@ -30,8 +30,7 @@ def webhook_post():
 
     if data and "entry" in data:
         for entry in data["entry"]:
-            changes = entry.get("changes", [])
-            for change in changes:
+            for change in entry.get("changes", []):
                 value = change.get("value", {})
                 messages = value.get("messages", [])
 
@@ -43,7 +42,6 @@ def webhook_post():
                     print("Pesan dari:", sender)
                     print("Isi:", text)
 
-                    # Kirim balasan otomatis
                     WhatsAppService.send_message(
                         to=sender,
                         message=f"Kamu mengirim: {text}"
@@ -52,9 +50,6 @@ def webhook_post():
     return "EVENT_RECEIVED", 200
 
 
-# =========================
-#   ROOT ROUTE
-# =========================
 @message_bp.route("/", methods=["GET"])
 def home():
     return "WhatsApp Cloud API Bot Aktif!"

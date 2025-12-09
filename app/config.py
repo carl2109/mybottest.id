@@ -9,3 +9,4 @@ class Config:
     PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
     WABA_ID = os.getenv("WABA_ID")
 
+
