@@ -6,11 +6,12 @@ def create_app():
     app.config.from_object(Config)
 
     # REGISTER ROUTES
-    from .controllers.webhook_controller import webhook_bp
-    app.register_blueprint(webhook_bp, url_prefix="/webhook")
+    from .controllers.message_controller import message_bp
+    app.register_blueprint(message_bp, url_prefix="")  # tanpa /api biar URL lebih sederhana
 
     return app
 
+ 
 
 
 

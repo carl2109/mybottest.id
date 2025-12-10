@@ -9,18 +9,17 @@ class WhatsAppService:
 
         headers = {
             "Authorization": f"Bearer {current_app.config['WHATSAPP_TOKEN']}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
         data = {
             "messaging_product": "whatsapp",
             "to": to,
             "type": "text",
-            "text": {"body": message}
+            "text": {"body": message},
         }
 
-        r = requests.post(url, headers=headers, json=data)
-        print("RESPONSE WA:", r.text)
-        return r.json()
+        r = requests.post(url, json=data, headers=headers)
+        print("API Response:", r.text)
 
 
