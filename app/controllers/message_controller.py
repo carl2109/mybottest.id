@@ -22,11 +22,14 @@ def verify_token():
 # POST: RECEIVE MESSAGE
 # ==========================
 @message_bp.route("/webhook", methods=["POST"])
-def receive_message():
-    data = request.get_json()
-    print("📥 Incoming:", data)
+def webhook_post():
+    data = request.get_json(silent=True)
+    print("INCOMING DATA:", data)
 
-    if data and "entry" in data:
+    if not data:
+        return "OK", 200
+
+    if "entry" in data:
         for entry in data["entry"]:
             for change in entry.get("changes", []):
                 value = change.get("value", {})
@@ -35,10 +38,15 @@ def receive_message():
                 if messages:
                     msg = messages[0]
                     sender = msg["from"]
-                    text = msg["text"]["body"] if "text" in msg else ""
+                    text = msg.get("text", {}).get("body", "")
 
-                    print(f"Pesan dari {sender}: {text}")
+                    print("Pesan dari:", sender)
+                    print("Isi:", text)
 
-                    WhatsAppService.send_message(sender, f"Kamu mengirim: {text}")
+                    WhatsAppService.send_message(
+                        to=sender,
+                        message=f"Kamu mengirim: {text}"
+                    )
 
     return "EVENT_RECEIVED", 200
+
